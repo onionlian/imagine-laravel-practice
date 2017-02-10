@@ -11,8 +11,12 @@ class HomeController extends Controller
 {
     public function imgShow(string $any = '')
     {
-        list($id, $file_name)       = explode('-', $any);
-        list($size_url, $type_name) = explode('.', $file_name);
+        list($id, $file_name) = array_pad(explode('-', $any), 2, null);
+        if (!$file_name) {
+            list($id, $file_name) = explode('.', $any);
+            $file_name            = '.' . $file_name;
+        }
+        list($size_url, $type_name) = array_pad(explode('.', $file_name), 2, null);
         $size                       = sscanf($size_url, 'w%dh%d');
         $flag                       = [];
 
@@ -33,7 +37,7 @@ class HomeController extends Controller
         }
         //dd($size, $i);
 
-        if (!$size[1]) {
+        if (!isset($size[1]) || !$size[1]) {
             $size[1]            = $size[0] / $image_db->width * $image_db->height;
             $flag['autoheight'] = true;
         }
